@@ -9,59 +9,59 @@ local nodeFactory = require("DoubleLinkedListNode")
 
 local factory = {ERR_EMPTY={message="Error - Empty List"}}
 
-function factory.pushLeft(dequeue, data)
-    if ~dequeue._head then
-        dequeue._head = node(data, nil, nil)
-        dequeue._tail = dequeue._head
-        dequeue._size = 1
+function factory:pushLeft(data)
+    if ~self._head then
+        self._head = nodeFactory:new(data, nil, nil)
+        self._tail = self._head
+        self._size = 1
     else
-        dequeue._head = node(data, nil, dequeue._head)
-        dequeue._size = dequeue._size + 1
+        self._head = nodeFactory:new(data, nil, self._head)
+        self._size = self._size + 1
     end
 end
 
-function factory.pushRight(dequeue, data)
-    if ~dequeue._tail then
-        dequeue._head = node(data, nil, nil)
-        dequeue._tail = dequeue._head
-        dequeue._size = 1
+function factory:pushRight(data)
+    if ~self._tail then
+        self._head = nodeFactory:new(data, nil, nil)
+        self._tail = self._head
+        self._size = 1
     else
-        dequeue._tail = node(data, dequeue._tail, nil)
-        dequeue._size = dequeue._size + 1
+        self._tail = nodeFactory:new(data, self._tail, nil)
+        self._size = self._size + 1
     end
 end
 
-function factory.popLeft(dequeue)
-    if ~dequeue._head then
-        return dequeue.ERR_EMPTY
+function factory:popLeft()
+    if ~self._head then
+        return self.ERR_EMPTY
     else
-        val = dequeue._head.data
-        old = dequeue._head
-        dequeue._head = dequeue._head.next
+        val = self._head.data
+        old = self._head
+        self._head = self._head.next
         old = nil
-        dequeue._size = dequeue._size - 1
+        self._size = self._size - 1
         return val
     end
 end
 
-function factory.popRight(dequeue)
-    if ~dequeue._tail then
-        return dequeue.ERR_EMPTY
+function factory:popRight()
+    if ~self._tail then
+        return self.ERR_EMPTY
     else
-        val = dequeue._tail.data
-        old = dequeue._tail
-        dequeue._tail = dequeue._tail.prev
+        val = self._tail.data
+        old = self._tail
+        self._tail = self._tail.prev
         old = nil
-        dequeue._size = dequeue._size - 1
+        self._size = self._size - 1
         return val
     end
 end
 
-function factory.peekLeft(dequeue)
-    if dequeue._head then
-        return dequeue._head.data
+function factory:peekLeft()
+    if self._head then
+        return self._head.data
     else
-        return dequeue.ERR_EMPTY
+        return self.ERR_EMPTY
     end
 end
 

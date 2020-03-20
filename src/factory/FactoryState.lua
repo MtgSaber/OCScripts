@@ -132,16 +132,22 @@ end
 function factory:dispatch()
     local tempQueue = dequeueFactory:new()
     while true do
+        -- if there are no jobs left in the queue, quit.
         if self.dispatchQueue:getSize() == 0 then
+            while tempQueue:getSize() ~= 0 do
+                self.dispatchQueue:pushRight(tempQueue:popLeft())
+            end
             return nil
         end
         tempQueue:pushLeft(self.dispatchQueue:popRight())
         local curRecipe = tempQueue:peekLeft()
         for i=1, #self.stationStates do
+            -- if this job can be performed by this station, and the station isn't preoccupied,
             if self.stationStates[i].station.supportedRecipes[curRecipe.id]
                     and ~self.stationStates[i].job
             then
-
+                -- Assign this job to the station and remove it from the queue.
+                
             end
         end
     end

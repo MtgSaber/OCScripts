@@ -7,7 +7,7 @@ Date: 3/17/2020
 
 local factory = {}
 
-function factory.new(self, data, prev, next)
+function factory:new(data, prev, next)
     return {
         data = data,
         prev = prev,
