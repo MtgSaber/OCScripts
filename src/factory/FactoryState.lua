@@ -58,7 +58,7 @@ function factory:request(recipe, amount)
     local networkQtys = {}
     for i=1, #netItems do
         for j=1, #recipe.inputDBIndices do
-            if ~networkQtys[recipe.inputDBIndices[j]] then
+            if not networkQtys[recipe.inputDBIndices[j]] then
                 local netItem = netItems[i]
                 local dbItem = db.get(j)
                 if netItem.label == dbItem.label
@@ -88,7 +88,7 @@ function factory:request(recipe, amount)
     local deficits = {}
     for id, allocation in pairs(newAllocations) do
         -- if input unavailable, record the amount network is lacking
-        if ~networkQtys[allocation.dbIndex] then
+        if not networkQtys[allocation.dbIndex] then
             deficits[deficitCounter] = allocation
             deficitCounter = deficitCounter + 1
         else
@@ -108,7 +108,7 @@ function factory:request(recipe, amount)
 
     -- allocate items
     for id, allocation in pairs(newAllocations) do
-        if ~self.itemAllocations[id] then
+        if not self.itemAllocations[id] then
             self.itemAllocations[id] = allocation
         else
             self.itemAllocations[id].amount = self.itemAllocations[id].amount + allocation.amount
@@ -144,10 +144,10 @@ function factory:dispatch()
         for i=1, #self.stationStates do
             -- if this job can be performed by this station, and the station isn't preoccupied,
             if self.stationStates[i].station.supportedRecipes[curRecipe.id]
-                    and ~self.stationStates[i].job
+                    and not self.stationStates[i].job
             then
                 -- Assign this job to the station and remove it from the queue.
-                
+
             end
         end
     end

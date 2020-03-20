@@ -5,9 +5,9 @@ Author: Andrew Arnold
 Date: 3/17/2020
 ]]--
 
-local factory = {}
+local node = {}
 
-function factory:new(data, prev, next)
+function node:new(data, prev, next)
     return {
         data = data,
         prev = prev,
@@ -16,4 +16,4 @@ function factory:new(data, prev, next)
     }
 end
 
-return factory
+return node
