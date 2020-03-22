@@ -6,9 +6,9 @@ Author: Andrew Arnold
 Date: 3/20/2020
 ]]--
 
-local dequeueFactory = require("Dequeue")
+local Dequeue = require("Dequeue")
 local serial = require("serialization")
-local factoryLib = require("FactoryDataDef")
+local FactoryDataDef = require("FactoryDataDef")
 
 local configPath = ""
 local configFile = io.open(configPath, "r")
@@ -22,7 +22,7 @@ local factory = {
     config = config,
     requests = {},
     requestCounter = 0,
-    dispatchQueue = dequeueFactory:new(),
+    dispatchQueue = Dequeue:new(),
     dispatchCounter = 0,
     jobCounter = 0,
     stationStates = {},
@@ -78,7 +78,7 @@ function factory:request(recipe, amount)
     local newAllocations = {}
     for i = 1, #recipe.inputDBIndices do
         local id = recipe.dbAddress.."@"..recipe.inputDBIndices[i]
-        newAllocations[id] = factoryLib.ItemAllocation(
+        newAllocations[id] = FactoryDataDef.ItemAllocation(
                 id, recipe.dbAddress, recipe.inputDBIndices[i], recipe.inputAmounts[i]
         )
     end
@@ -116,21 +116,22 @@ function factory:request(recipe, amount)
     end
 
     -- create requests
-    local id = "r_"..recipe.id.."#"..tostring(requestCounter)
-    self.requests[id] = factoryLib.Request(id, recipe, amount, newAllocations)
+    local id = "r"..tostring(self.requestCounter).."_"..recipe.id
+    self.requestCounter = self.requestCounter + 1
+    self.requests[id] = FactoryDataDef.Request(id, recipe, amount, newAllocations)
     for i=1, amount // recipe.maxBatchSize do
-        self.dispatchQueue:pushLeft(factoryLib.JobInput(id, self.requests[id], recipe.maxBatchSize))
+        self.dispatchQueue:pushLeft(FactoryDataDef.JobInput(id, self.requests[id], recipe.maxBatchSize))
     end
     local rem = amount % recipe.maxBatchSize
     if rem ~= 0 then
-        self.dispatchQueue:pushLeft(factoryLib.JobInput(id, self.requests[id], rem))
+        self.dispatchQueue:pushLeft(FactoryDataDef.JobInput(id, self.requests[id], rem))
     end
 
     return true, newAllocations
 end
 
 function factory:dispatch()
-    local tempQueue = dequeueFactory:new()
+    local tempQueue = Dequeue:new()
     while true do
         -- if there are no jobs left in the queue, quit.
         if self.dispatchQueue:getSize() == 0 then
@@ -140,16 +141,32 @@ function factory:dispatch()
             return nil
         end
         tempQueue:pushLeft(self.dispatchQueue:popRight())
-        local curRecipe = tempQueue:peekLeft()
+        local jobInput = tempQueue:peekLeft()
         for i=1, #self.stationStates do
+            local stationState = self.stationStates[i]
             -- if this job can be performed by this station, and the station isn't preoccupied,
-            if self.stationStates[i].station.supportedRecipes[curRecipe.id]
-                    and not self.stationStates[i].job
+            if stationState.station.supportedRecipes[jobInput.id]
+                    and not stationState.job
             then
                 -- Assign this job to the station and remove it from the queue.
-
+                stationState.job = FactoryDataDef.Job(
+                        "j"..tostring(self.jobCounter).."_"..jobInput.request.recipe.id.."_x"..tostring(jobInput.amount),
+                        jobInput,
+                        stationState.station
+                )
+                self.jobCounter = self.jobCounter + 1
             end
         end
+    end
+end
+
+function factory:stationCycle()
+    for i=1, #self.stationStates do
+        local station = self.stationStates[i].station
+        local job = self.stationStates[i].job
+        local ingrediants = {}
+        local inv = component.proxy(station.controllerAddress)
+
     end
 end
 

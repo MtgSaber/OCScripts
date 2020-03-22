@@ -22,17 +22,6 @@ function api.Recipe(
     }
 end
 
-function api.Station(id, controllerAddress, busAddress, inventorySide, busSide, supportedRecipes)
-    return {
-        id = id,
-        controllerAddress = controllerAddress,
-        busAddress = busAddress,
-        inventorySide = inventorySide,
-        busSide = busSide,
-        supportedRecipes = supportedRecipes
-    }
-end
-
 function api.Job(id, jobInput, station)
     return {
         id = id,

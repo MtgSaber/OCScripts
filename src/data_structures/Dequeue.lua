@@ -5,35 +5,37 @@ Author: Andrew Arnold
 Date: 3/17/2020
 ]]--
 
-local node = require("DoubleLinkedNode")
+local Node = require("DoubleLinkedNode")
 
-local dequeue = { ERR_EMPTY={ message="Error - Empty List"}}
+local Dequeue = { ERR_EMPTY={ message="Error - Empty List"}}
+local metatable = {__index= Dequeue }
 
-function dequeue:pushLeft(data)
+
+function Dequeue:pushLeft(data)
     if not self._head then
-        self._head = node:new(data, nil, nil)
+        self._head = Node:new(data, nil, nil)
         self._tail = self._head
         self._size = 1
     else
-        self._head = node:new(data, nil, self._head)
+        self._head = Node:new(data, nil, self._head)
         self._head.next.prev = self._head
         self._size = self._size + 1
     end
 end
 
-function dequeue:pushRight(data)
+function Dequeue:pushRight(data)
     if not self._tail then
-        self._head = node:new(data, nil, nil)
+        self._head = Node:new(data, nil, nil)
         self._tail = self._head
         self._size = 1
     else
-        self._tail = node:new(data, self._tail, nil)
+        self._tail = Node:new(data, self._tail, nil)
         self._tail.prev.next = self._tail
         self._size = self._size + 1
     end
 end
 
-function dequeue:popLeft()
+function Dequeue:popLeft()
     if not self._head then
         return self.ERR_EMPTY
     else
@@ -49,7 +51,7 @@ function dequeue:popLeft()
     end
 end
 
-function dequeue:popRight()
+function Dequeue:popRight()
     if not self._tail then
         return self.ERR_EMPTY
     else
@@ -65,7 +67,7 @@ function dequeue:popRight()
     end
 end
 
-function dequeue:peekLeft()
+function Dequeue:peekLeft()
     if self._head then
         return self._head.data
     else
@@ -73,7 +75,7 @@ function dequeue:peekLeft()
     end
 end
 
-function dequeue:peekRight()
+function Dequeue:peekRight()
     if self._tail then
         return self._tail.data
     else
@@ -81,23 +83,12 @@ function dequeue:peekRight()
     end
 end
 
-function dequeue:getSize()
+function Dequeue:getSize()
     return self._size
 end
 
-function dequeue:new()
-    return {
-        pushLeft = self.pushLeft,
-        pushRight = self.pushRight,
-        popLeft = self.popLeft,
-        popRight = self.popRight,
-        peekLeft = self.peekLeft,
-        peekRight = self.peekRight,
-        getSize = self.getSize,
-        new = self.new,
-        ERR_EMPTY = self.ERR_EMPTY,
-        _size = 0
-    }
+function Dequeue:new()
+    return setmetatable({_size = 0}, metatable)
 end
 
-return dequeue
+return Dequeue

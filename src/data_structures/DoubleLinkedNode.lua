@@ -5,15 +5,14 @@ Author: Andrew Arnold
 Date: 3/17/2020
 ]]--
 
-local node = {}
+local Node = {}
+local metatable = {__index = Node }
 
-function node:new(data, prev, next)
-    return {
-        data = data,
-        prev = prev,
-        next = next,
-        new = self.new
-    }
+function Node:new(data, prev, next)
+    return setmetatable(
+            { data = data, prev = prev, next = next },
+            metatable
+    )
 end
 
-return node
+return Node
