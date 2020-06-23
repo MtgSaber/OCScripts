@@ -10,7 +10,7 @@ local api = {}
 function api.Recipe(
         id, dbAddress, inputDBIndices,
         inputAmounts, inputInventorySlots,
-        maxBatchSize
+        outputInventorySlots, maxBatchSize
 )
     return {
         id = id,
@@ -18,6 +18,7 @@ function api.Recipe(
         inputDBIndices = inputDBIndices,
         inputAmounts = inputAmounts,
         inputInventorySlots = inputInventorySlots,
+        outputInventorySlots = outputInventorySlots,
         maxBatchSize = maxBatchSize,
     }
 end

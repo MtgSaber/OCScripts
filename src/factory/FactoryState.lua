@@ -130,7 +130,11 @@ function factory:request(recipe, amount)
     return true, newAllocations
 end
 
-function factory:dispatch()
+--[[
+    Dispatches every job input in the queue to an available station.
+    If there are any jobs remaining that cannot be fulfilled, they will be put back into the dispatch queue.
+]]--
+function factory:dispatch(dispatchThread)
     local tempQueue = Dequeue:new()
     while true do
         -- if there are no jobs left in the queue, quit.
@@ -142,6 +146,7 @@ function factory:dispatch()
         end
         tempQueue:pushLeft(self.dispatchQueue:popRight())
         local jobInput = tempQueue:peekLeft()
+        -- for each station in our records,
         for i=1, #self.stationStates do
             local stationState = self.stationStates[i]
             -- if this job can be performed by this station, and the station isn't preoccupied,
@@ -160,13 +165,17 @@ function factory:dispatch()
     end
 end
 
-function factory:stationCycle()
+function factory:stationCycle(dispatchThread)
+    -- for each station,
     for i=1, #self.stationStates do
         local station = self.stationStates[i].station
         local job = self.stationStates[i].job
-        local ingrediants = {}
+        local ingredients = {}
         local inv = component.proxy(station.controllerAddress)
-
+        station:update()
+        if station.job.completed then
+            -- TODO: something?
+        end
     end
 end
 
