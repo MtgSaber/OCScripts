@@ -1,0 +1,43 @@
+send(target: number or string, remote_port: number, local_port: number[, data: any except function]): boolean[, string]
+	Sends an SNP packet to the target address.
+	
+	If target is a string, it will be resolved to an SNP by first checking the machine's DNS cache, and if it can't find it there it will perform a DNS request to the local SaberNet Router.
+		Otherwise it will send this packet directly to the appropriate SaberNet host.
+	
+	remote_port is the 16-bit port from which the remote host should recieve this packet.
+	
+	local_port is the 16-bit port from which this machine will expect a reply to this packet.
+	
+	data will be sent as the payload of the SNP packet.
+		If data is a table, it will be serialized on this end, then unserialized at the receiving end.
+		
+	This function returns true if the message was successfully sent, false and an error message otherwise.
+		The error message will be of the form: "ERR_CODE:message" where ERR_CODE is:
+			"NO_ROUTER": no router was found to send the message to.
+			"BAD_SITE": site name not registered in the DNS database.
+			"BAD_ADDR": the provided SNP address doesn't exist.
+				If a site name was provided and this error is returned, contact the site owner to correct the DNS service.
+			"OVERFLOW": data is too large to send in one packet.
+		message will be a user-friendly error message
+
+bind(port): boolean
+
+isConnected(): boolean
+
+setPreferredAddress(host_addr)
+
+getHostAddress(): number or nil
+
+_emptyDNSCache()
+
+_emptyRARPCache()
+
+getRouterAddress(): number or nil
+
+getNetworkAddress(): number or nil
+
+dnsLookup(site_name: string): table
+
+rarpLookup(snp_addr: number): table
+
+listen(port: number[, timeout: number]): table or nil

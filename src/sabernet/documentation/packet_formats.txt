@@ -1,0 +1,107 @@
+Standard SNP packet:
+
+	This datagram is encapsulated within a regular OpenComputers message.
+	The header consists of a 5-char string, and 3 32-bit integers.
+	The header occupies the first 4 items of the message, leaving 4 slots for the payload.
+	The header uses a total of 205 bytes, leaving 7985 for the payload.
+	The API will convert this information into a table with each variable component as an entry.
+	The header items are as follows:
+
+    Protocol String:
+
+	    "SNP" + VER
+
+		where VER is the 2-digit SaberNet Protocol version number.
+
+	Fragmentation Numbers & Datatype:
+
+	    ID *0x100000000 + PACKET_NUM *0x1000000  + PACKET_QTY *0x10000 + DATA_TYPE
+
+		where:
+			ID is a 16-bit number that uniquely identifies this packet.
+			PACKET_NUM is an 8-bit number representing this datagram's position in the packet.
+			PACKET_QTY is an 8-bit number representing the number of datagrams in this packet.
+			DATA_TYPE is the type of data being transmitted. Below is the table for datatype codes:
+				0: nil
+				1: boolean
+				2: number
+				3: normal string
+				4: serialized table
+
+	Transport Numbers:
+
+		SERVICE *0x100000000 + RX_PORT *0x10000 + TX_PORT
+
+		where:
+			SERVICE is a 16-bit number representing the service being used. See SaberNet Services for more info.
+			RX_PORT is the 16-bit port to which the SaberNet Router will send this message.
+			TX_PORT is the 16-bit port to which the recipient should reply to.
+			         If this machine will no longer listen for replies after sending this message,
+					 then this field will be all 0's.
+					 This is similar to shutting down a port with TCP.
+
+	Addresses:
+	
+	    RX_NET *0x1000000000000 + RX_HOST *0x100000000 + TX_NET *0x10000 + TX_HOST
+		
+		where:
+		    RX_NET is the 16-bit network address of the Rx host machine.
+		    RX_HOST is the 16-bit host address of the Rx machine.
+		    TX_NET is the 16-bit network address of the Tx host machine.
+		    TX_HOST is the 16-bit host address of the Tx host machine.
+
+SNDHCP:
+
+	This packet is encapsulated within a standard SNP packet.
+	This packet is first broadcasted by the client machine wishing to obtain an SNP address.
+	Another packet of this form is unicasted by the local SaberNet Router to the client machine.
+
+	The client packet using this service uses the following values for an SNP packet:
+	    SERVICE = 0xFFFF
+		TX_HOST = 0 if the client doesn't have a preffered address, otherwise the preffered address
+	    TX_NET = 0
+		RX_NET = 0
+		RX_HOST = 0
+
+		DATA = nil
+
+    The router response packet uses the following values:
+	    SERVICE = 0xFFFF
+		TX_NET = this network's address
+		TX_HOST = this router's SNP address
+		RX_HOST = the SNP address assigned to the client machine, 0 if rejected
+
+		DATA = {
+			lease_exp = expiration epoch time, nil if rejected
+		}
+
+SNRARP:
+
+	This packet is encapsulated within a standard SNP packet.
+	This packet is unicasted to the SaberNet Router wishing to look up the physical address of a host on the local network.
+	Another packet of this form is unicasted by the local SaberNet Router to the client machine.
+
+	The client packet uses the following values:
+		SERVICE = 0xFFFE
+		TX_NET = 0
+		TX_HOST = 0
+		RX_NET = 0
+		RX_HOST = the local-network machine's host address
+
+		DATA = nil
+
+	The router response packet uses the following values:
+		SERVICE = 0xFFFE
+
+		DATA = nil on failure, address string of machine on success
+
+SNDNS:
+
+	This packet uses the standard SNP packet, and is unicasted to the local SaberNet Router
+	The following values are used:
+		SERVICE = 0xFFFD
+
+		DATA = {
+			site_name = requested website
+			snp_addr = nil on request, SNP address of remote host on reply, nil on error
+		}

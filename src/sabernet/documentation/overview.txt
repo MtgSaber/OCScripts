@@ -1,0 +1,16 @@
+The primary services that this system adds on top of the mod's network system are modified approaches to DHCP, RARP, and DNS, along with a physical star-topology internetworking backbone.
+
+SaberNet is a system that allows local networks to communicate with one another via a centralized routing center.
+This routing center is its own local network, and is connected to local network clients via a Linked Card.
+This Linked Card will be the ONLY connection between a local network and the routing center.
+
+This system uses a simplified IP-style addressing scheme with a 16-bit network address and 16-bit host address.
+The network address is used by the routing center to send packets to client networks.
+The host address is used by the local network to send the packet to the appropriate machine.
+
+A local network will have one SaberNet Router.
+This router will provide DHCP- & RARP-style services to provide SaberNet addresses to local machines, and to map SNP addresses to physical addresses of machines on the same network.
+The router will also serve as an actual router, providing the connection to the SaberNet routing center.
+Local machines must have the sabernet API installed on them to use the SaberNet service.
+This API provides the protocols to communicate through SaberNet, and will run as its own process in order to perform maintenance.
+The maintenance that this API performs involves DHCP requests on machine boot, DNS & RARP caching, fragmentation and defragmentation of packets, and processing of incoming packets.
