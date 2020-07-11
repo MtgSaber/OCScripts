@@ -4,6 +4,9 @@ Standard SNP packet:
 	The header consists of a 5-char string, and 3 32-bit integers.
 	The header occupies the first 4 items of the message, leaving 4 slots for the payload.
 	The header uses a total of 205 bytes, leaving 7985 for the payload.
+	The payload will be restricted to one value.
+	These packets may be fragmented up to 8 times to fit into OpenComputers' message limit.
+		This basically just means that one call to API.send() might send up to 8 modem messages, but the Rx will only see the one finished packet.
 	The API will convert this information into a table with each variable component as an entry.
 	The header items are as follows:
 
@@ -42,13 +45,13 @@ Standard SNP packet:
 
 	Addresses:
 	
-	    RX_NET *0x1000000000000 + RX_HOST *0x100000000 + TX_NET *0x10000 + TX_HOST
+	    RX_NET *0x1000000000 + RX_HOST *0x1000000 + TX_NET *0x1000 + TX_HOST
 		
 		where:
-		    RX_NET is the 16-bit network address of the Rx host machine.
-		    RX_HOST is the 16-bit host address of the Rx machine.
-		    TX_NET is the 16-bit network address of the Tx host machine.
-		    TX_HOST is the 16-bit host address of the Tx host machine.
+		    RX_NET is the 12-bit network address of the Rx host machine.
+		    RX_HOST is the 12-bit host address of the Rx machine.
+		    TX_NET is the 12-bit network address of the Tx host machine.
+		    TX_HOST is the 12-bit host address of the Tx host machine.
 
 SNDHCP:
 
@@ -63,17 +66,21 @@ SNDHCP:
 		RX_NET = 0
 		RX_HOST = 0
 
-		DATA = nil
+		DATA = nil if normal request, otherwise one of the following string values:
+			"DIS": returns the this machine's address back to the router and "DISconnects" it.
+				If dynamically assigned, address will be available for another machine.
+				If static, address will not be available to other machines, but this machine will still be offline.
+			"DEL": DELetes the static address preference of this machine. The previous preffered address will be leased back in a dynamic fashion.
 
     The router response packet uses the following values:
 	    SERVICE = 0xFFFF
 		TX_NET = this network's address
 		TX_HOST = this router's SNP address
+		RX_NET = this network's address
 		RX_HOST = the SNP address assigned to the client machine, 0 if rejected
 
-		DATA = {
-			lease_exp = expiration epoch time, nil if rejected
-		}
+		DATA =
+			lease_exp = expiration time of this machine's dynamic address, in Minecraft time; nil if rejected or static
 
 SNRARP:
 
