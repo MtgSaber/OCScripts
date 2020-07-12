@@ -6,8 +6,10 @@ Standard SNP packet:
 	The header uses a total of 205 bytes, leaving 7985 for the payload.
 	The payload will be restricted to one value.
 	These packets may be fragmented up to 8 times to fit into OpenComputers' message limit.
-		This basically just means that one call to API.send() might send up to 8 modem messages, but the Rx will only see the one finished packet.
+		This basically just means that one call to API.send() might send up to 8 modem messages,
+		but the Rx will only see the one finished packet.
 	The API will convert this information into a table with each variable component as an entry.
+
 	The header items are as follows:
 
     Protocol String:
@@ -39,9 +41,9 @@ Standard SNP packet:
 			SERVICE is a 16-bit number representing the service being used. See SaberNet Services for more info.
 			RX_PORT is the 16-bit port to which the SaberNet Router will send this message.
 			TX_PORT is the 16-bit port to which the recipient should reply to.
-			         If this machine will no longer listen for replies after sending this message,
-					 then this field will be all 0's.
-					 This is similar to shutting down a port with TCP.
+			        If this machine will no longer listen for replies after sending this message,
+					then this field will be all 0's.
+					This is similar to shutting down a port with TCP.
 
 	Addresses:
 	
@@ -61,26 +63,26 @@ SNDHCP:
 
 	The client packet using this service uses the following values for an SNP packet:
 	    SERVICE = 0xFFFF
-		TX_HOST = 0 if the client doesn't have a preffered address, otherwise the preffered address
+		TX_HOST = 0 if the client doesn't have a preffered address, otherwise the preffered address.
 	    TX_NET = 0
 		RX_NET = 0
 		RX_HOST = 0
 
 		DATA = nil if normal request, otherwise one of the following string values:
-			"DIS": returns the this machine's address back to the router and "DISconnects" it.
-				If dynamically assigned, address will be available for another machine.
-				If static, address will not be available to other machines, but this machine will still be offline.
-			"DEL": DELetes the static address preference of this machine. The previous preffered address will be leased back in a dynamic fashion.
+			"DIS": Returns the this machine's address back to the router and "DISconnects" it.
+				   If dynamically assigned, address will be available for another machine.
+				   If static, address will not be available to other machines, but this machine will still be offline.
+			"DEL": DELetes the static address preference of this machine.
+				   The previous preffered address will be leased back in a dynamic fashion.
 
     The router response packet uses the following values:
 	    SERVICE = 0xFFFF
-		TX_NET = this network's address
-		TX_HOST = this router's SNP address
-		RX_NET = this network's address
-		RX_HOST = the SNP address assigned to the client machine, 0 if rejected
+		TX_NET = this network's address.
+		TX_HOST = this router's SNP address.
+		RX_NET = this network's address.
+		RX_HOST = the SNP address assigned to the client machine, 0 if rejected.
 
-		DATA =
-			lease_exp = expiration time of this machine's dynamic address, in Minecraft time; nil if rejected or static
+		DATA = expiration time of this machine's dynamic address, in Minecraft time; nil if rejected or static.
 
 SNRARP:
 
@@ -93,22 +95,22 @@ SNRARP:
 		TX_NET = 0
 		TX_HOST = 0
 		RX_NET = 0
-		RX_HOST = the local-network machine's host address
+		RX_HOST = the local-network machine's host address.
 
 		DATA = nil
 
 	The router response packet uses the following values:
 		SERVICE = 0xFFFE
 
-		DATA = nil on failure, address string of machine on success
+		DATA = nil on failure, address string of machine on success.
 
 SNDNS:
 
-	This packet uses the standard SNP packet, and is unicasted to the local SaberNet Router
+	This packet uses the standard SNP packet, and is unicasted to the local SaberNet Router.
 	The following values are used:
 		SERVICE = 0xFFFD
 
 		DATA = {
-			site_name = requested website
-			snp_addr = nil on request, SNP address of remote host on reply, nil on error
+			siteName = requested website.
+			snpAddr = nil on request, SNP address of remote host on reply, nil on error.
 		}

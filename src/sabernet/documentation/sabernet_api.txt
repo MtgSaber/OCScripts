@@ -1,4 +1,4 @@
-send(target: number or string, remote_port: number, local_port: number[, data: any except function]): boolean[, string]
+send(target: number or string, remotePort: number, localPort: number[, data: any except function]): boolean[, string]
 	Sends an SNP packet to the target address.
 	
 	If target is a string, it will be resolved to an SNP by first checking the machine's DNS cache, and if it can't find it there it will perform a DNS request to the local SaberNet Router.
@@ -26,22 +26,22 @@ bind(port): boolean
 unbind(port)
 	Closes the given port on this machine. This is equivalent to modem.close(port)
 
-is_connected(): boolean
+isConnected(): boolean
 	Returns whether or not this computer is connected to SaberNet.
 
-set_preferred_address(host_addr: number or nil): boolean
+setPreferredAddress(hostAddr: number or nil): boolean
 	This will make a DHCP request with this given host_addr as the preferred address.
 	If host_addr is nil, it will relinquish the computer's preffered address and will be assigned one by the local Router.
 
 	Returns true on success, false if the Router denies the request.
 
-get_hostAddress(): number or nil
+getHostAddress(): number or nil
 	returns the SNP address assigned to this machine, nil of not connected.
 
-_emptyDNSCache()
+emptyDNSCache()
 	empties the DNS cache of this machine, forcing it to perform new DNS queries for future domain-SNP address resolutions.
 
-_emptyRARPCache()
+emptyRARPCache()
 	empties the RARP cache of this machine, forcing it to perform new RARP queries for future SNP address to physical address resolutions.
 
 getRouterAddress(): number or nil
@@ -50,20 +50,20 @@ getRouterAddress(): number or nil
 getNetworkAddress(): number or nil
 	returns this network's SNP address, nil if disconnected.
 
-dnsLookup(site_name: string): table or nil
+dnsLookup(siteName: string): table or nil
 	Performs a DNS query to the local Router. If the domain is cached and the entry's timer is still active, it will refer to the cached response.
 	If this computer is not connected to SaberNet, this method will attempt to connect itself by first performing a DHCP request.
 	If this machine is disconnected and the DHCP request failed, this will return nil.
 	If the SNP addres of the site is on the same network, a RARP request will also be sent and the result will be cached and recorded in the returned table.
 	
 	The table entries are as follows:
-		snp_addr: number
+		snpAddr: number
 			The SNP address of the requested site, nil on failure
-		phys_addr: string
+		physAddr: string
 			The physical address of the host if it is on this local network, nil if remote or failure
-		is_authoratative: boolean
+		isAuthoritative: boolean
 			true if DNS request was sent, false if from cache.
 
-rarpLookup(snp_addr: number): table
+rarpLookup(snpAddr: number): table
 
 listen(port: number[, timeout: number]): table or nil
