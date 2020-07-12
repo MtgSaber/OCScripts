@@ -31,9 +31,19 @@ isConnected(): boolean
 
 setPreferredAddress(hostAddr: number or nil): boolean
 	This will make a DHCP request with this given host_addr as the preferred address.
-	If host_addr is nil, it will relinquish the computer's preffered address and will be assigned one by the local Router.
+	If host_addr is nil, it will relinquish the computer's preferred address and will be assigned one by the local Router.
 
 	Returns true on success, false if the Router denies the request.
+
+deletePreferredAddress()
+	This will make a DHCP request with the "DEL" option.
+
+connect(): boolean
+	If this computer does not have an SNP address, this will make a DHCP request to obtain one.
+	If the config file for this computer contains a preferred address, this will include it in the DHCP request.
+
+disconnect()
+	If this computer has an SNP address, this will make a DHCP request with the "DIS" option.
 
 getHostAddress(): number or nil
 	returns the SNP address assigned to this machine, nil of not connected.
@@ -64,6 +74,16 @@ dnsLookup(siteName: string): table or nil
 		isAuthoritative: boolean
 			true if DNS request was sent, false if from cache.
 
-rarpLookup(snpAddr: number): table
+rarpLookup(snpAddr: number): table or nil
+	Performs a RARP query to the Router. If the requested SNP address is not a part of this network, this will return nil.
+	Uses cacheing in the same fashion as dnsLookup().
+	
+	snpAddr is the local-network SNP address to be resolved into a physical address.
+	
+	On success, returns a table with the following entries:
+		physAddr: string
+			The physical address of the host if it is on this local network.
+		isAuthoritative: boolean
+			true if DNS request was sent, false if from cache.
 
 listen(port: number[, timeout: number]): table or nil
