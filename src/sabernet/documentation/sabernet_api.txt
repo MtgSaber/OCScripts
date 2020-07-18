@@ -64,7 +64,8 @@ dnsLookup(siteName: string): table or nil
 	Performs a DNS query to the local Router. If the domain is cached and the entry's timer is still active, it will refer to the cached response.
 	If this computer is not connected to SaberNet, this method will attempt to connect itself by first performing a DHCP request.
 	If this machine is disconnected and the DHCP request failed, this will return nil.
-	If the SNP addres of the site is on the same network, a RARP request will also be sent and the result will be cached and recorded in the returned table.
+	If the SNP addres of the site is on the same network,
+		a RARP request will also be sent and the result will be cached and recorded in the returned table.
 	
 	The table entries are as follows:
 		snpAddr: number
@@ -87,3 +88,29 @@ rarpLookup(snpAddr: number): table or nil
 			true if DNS request was sent, false if from cache.
 
 listen(port: number[, timeout: number]): table or nil
+	if the given port is bound, this function will block until a packet is received on the given port.
+
+	If timeout is provided, this will return nil if the timer runs out.
+
+	The returned table has the following entries:
+		TX_NET: number
+			network address of the remote host.
+		TX_HOST: number
+			host address of the remote host.
+		TX_ADDR: number
+			full SNP address of the remote host.
+		TX_PORT: number or nil
+			If the remote host provided a port to respond to, this is that port.
+			If no remote port was specified, this will be nil.
+		RX_PORT: number
+			The port that this packet was received on.
+		DATA: any except function
+			The payload of the packet. If the payload was a serialized table, this will be the deserialized form.
+		TYPE: string
+			Datatype of the payload. See Lua documentation for possible values.
+		SERVICE: number
+			The ID of the service being used by this packet. See reserved service ID table.
+		TIMESTAMP: number
+			The Minecraft time that the last datagram of this packet was received.
+		PACKET_QTY: number
+			Number of datagrams used to transmit this packet.
