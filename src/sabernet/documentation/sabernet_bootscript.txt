@@ -1,0 +1,2 @@
+The boot script for SaberNet will create a background process to actually perform the features of the SaberNet Host Software.
+All API functions will simply use event.listen & event.push to invoke this process' functionalities.

@@ -5,64 +5,65 @@ Author: Andrew Arnold
 Date: 7/18/2020
 ]]--
 
-local api = {}
+local api = {_event = require("event")}
 
-function api:send(target, remotePort, localPort, data)
+function api.send(target, remotePort, localPort, data)
+    self._event.push("snpq_send", target, remotePort, localPort, data)
+    return event.listen()
+end
+
+function api.bind(port)
 
 end
 
-function api:bind(port)
+function api.unbind(port)
 
 end
 
-function api:unbind(port)
+function api.isConnected()
 
 end
 
-function api:isConnected()
+function api.setPreferredAddress(hostAddr)
 
 end
 
-function api:setPreferredAddress(hostAddr)
+function api.deletePreferredAddress()
 
 end
 
-function api:deletePreferredAddress()
+function api.connect()
 
 end
 
-function api:connect()
+function api.disconnect()
 
 end
 
-function api:disconnect()
+function api.getHostAddress()
 
 end
 
-function api:getHostAddress()
+function api.emptyDNSCache()
 
 end
 
-function api:emptyDNSCache()
+function api.emptyRARPCache()
 
 end
 
-function api:emptyRARPCache()
+function api.getRouterAddress()
 
 end
 
-function api:getRouterAddress()
+function api.dnsLookup(siteName)
 
 end
 
-function api:dnsLookup(siteName)
+function api.rarpLookup(snpAddr)
 
 end
 
-function api:rarpLookup(snpAddr)
-
-end
-
-function api:listen(port, timeout)
+function api.listen(port, timeout)
 
 end
